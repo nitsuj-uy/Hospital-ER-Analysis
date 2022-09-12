@@ -1,0 +1,89 @@
+--Average Wait Times per Month
+SELECT
+    MONTH(date) AS month,
+    YEAR(date) AS year,
+    AVG(patient_waittime)
+  FROM 
+    hospital_er
+ GROUP BY
+    year, 
+    month
+ ORDER BY 
+    month
+    
+--Admit/Not Admit by Referral per Month   
+SELECT 
+    MONTH(date) AS month,
+    SUM(CASE WHEN patient_admin_flag = TRUE THEN 1 ELSE 0 END) AS admitted,
+    SUM(CASE WHEN patient_admin_flag = FALSE THEN 1 ELSE 0 END) AS notadmitted,
+    COUNT(department_referral),
+    department_referral
+FROM
+    hospital_er
+GROUP BY
+    department_referral,
+    month
+ORDER BY 
+    department_referral,
+    month 
+ 
+--Admitted per Month
+SELECT 
+    SUM(CASE WHEN patient_admin_flag = TRUE THEN 1 ELSE 0 END) AS admitted,
+    SUM(CASE WHEN patient_admin_flag = FALSE THEN 1 ELSE 0 END) AS notadmitted,
+    MONTH(date) as month,
+    YEAR(date) as year
+ FROM   
+    hospital_er
+GROUP BY
+    year,
+    month 
+ORDER BY
+    month 
+    
+--Average Satisfaction Score per Month
+SELECT
+    MONTH(date) as month,
+    YEAR(date) as year,
+    AVG(patient_sat_score)
+FROM   
+    hospital_er
+GROUP BY
+    year,
+    month 
+ORDER BY
+    month 
+    
+ --Max Wait Times
+SELECT 
+    patient_id,
+    patient_admin_flag,
+    patient_waittime,
+    department_referral
+FROM 
+    hospital_er
+WHERE
+    patient_waittime = (
+        SELECT
+            MAX(patient_waittime)
+        FROM
+            hospital_er
+    )
+ORDER BY
+
+--Total Admitted
+SELECT 
+    SUM(CASE WHEN patient_admin_flag = TRUE THEN 1 ELSE 0 END) AS admitted,
+    SUM(CASE WHEN patient_admin_flag = FALSE THEN 1 ELSE 0 END) AS notadmitted
+ FROM   
+    hospital_er
+    
+--Total Department Referrals
+SELECT
+    COUNT(department_referral),
+    department_referral
+FROM
+    hospital_er
+GROUP BY 
+    department_referral
+
